@@ -5,32 +5,64 @@
 
 import cv2
 import time
+import datetime
+import glob
 import subprocess as sp
 import numpy as np
-!pwd
+import pandas as pd
 #import opencv-python as cv
 VIDEO_URL = "https://videos3.earthcam.com/fecnetwork/9974.flv/chunklist_w917803974.m3u8"
 VIDEO_URL
-filename= "/Users/ndapewaonyothi/Documents/DataScienceRetreat/DSR-2018/DSR_Project/cam_data/Day1_17.30{}.jpg"
-cv2.namedWindow("Streetcam",cv2.WINDOW_NORMAL)
+# Use if you have multiple images in the same folder
+files_new = set()
+files_wr = set()
+
+
+filename= "/Users/ndapewaonyothi/Documents/DataScienceRetreat/DSR-2018/DSR_Project/cam_data/{0}"
+cv2.namedWindow("Streetcam", cv2.WINDOW_NORMAL)
 FFMPEG_BIN = "/anaconda3/bin/ffmpeg"
-command = [FFMPEG_BIN,"-i", VIDEO_URL,
-           "-loglevel", "quiet", # no text output
+command = [FFMPEG_BIN, "-i", VIDEO_URL,
+           "-loglevel", "quiet",  # no text output
            "-an",   # disable audio
            "-f", "image2pipe",
            "-pix_fmt", "bgr24",
            "-vcodec", "rawvideo", "-"
-            ]
+           ]
 pipe = sp.Popen(command, stdin = sp.PIPE, stdout = sp.PIPE)
+
+files = glob.glob("/Users/ndapewaonyothi/Documents/DataScienceRetreat/DSR-2018/DSR_Project/cam_data/*.jpg")
+# -------- sorting paths in the txt file using the union
+with open('cam_images.txt', 'w') as f:
+    for item in files:
+        f.write("%s\n" % item)
+files_wr = files_wr.union(set(files))
 while True:
-    #Run below code in while loop for actual normal frames || 16:44
-    #raw_image = pipe.stdout.read(420*360*3) # read 432*240*3 bytes (= 1 frame)
-    #image =  np.fromstring(raw_image, dtype='uint8').reshape((360,420,3))
+    # Run below code in while loop for actual normal frames || 16:44
+    # raw_image = pipe.stdout.read(420*360*3) # read 432*240*3 bytes (= 1 frame)
+    # image =  np.fromstring(raw_image, dtype='uint8').reshape((360,420,3))
 
     raw_image = pipe.stdout.read(1280*720*3) # read 432*240*3 bytes (= 1 frame)
-    image =  np.fromstring(raw_image, dtype='uint8').reshape((720,1280,3))
+    image = np.fromstring(raw_image, dtype='uint8').reshape((720,1280,3))
     cv2.imshow("Streetcam",image)
-    cv2.imwrite(filename.format(time.time()), image) #write to a filepath, by timestamp
-    if cv2.waitKey(5) == 27:
+    #sckit for img processing. s3 fs to plug it into cv2 for img writing.
+    #Srcript Credit Pascal Schambach - Helped rewrite this
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('_%Y%m%d_%H%M%S')
+    new_filename = 'capture' + st + '.jpg' #jpg smaller than >png (transparent)
+    #---
+    cv2.imwrite(filename.format(new_filename), image) #write to a filepath, by timestamp
+    files = glob.glob("/*.jpg")
+    new_files = set(files) - files_wr
+    # -------- sorting paths in the txt file using the union
+    with open('cam_images.txt', 'a+') as f:
+        for item in sorted(new_files):
+            f.write("%s\n" % item)
+    files_wr = files_wr.union(new_files)
+
+
+    #What is happening here. I get these glitched frames, must resolve
+    if cv2.waitKey(1) == 2:
         break
 cv2.destroyAllWindows()
+
+#find dist file system with python to write imgs to.
