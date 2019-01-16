@@ -8,6 +8,7 @@ from datetime import datetime
 import numpy as np
 import subprocess as sp
 from time import time
+from time import sleep
 # import glob
 # import pandas as pd
 
@@ -53,6 +54,7 @@ def print_time(comment):
 
 counter = 0
 last_time = 0
+last_raw_image = None
 
 # Would like write all print outs to a log file - How :( ?
 while True:
@@ -63,41 +65,50 @@ while True:
 #    print("Number "+str(counter))
 #    print_time("Beginning")
     raw_image = pipe.stdout.read(1280*720*3) # read 432*240*3 bytes (= 1 frame)
+    # Check if raw image has the same bytes as the previous image.
+    # To avoid taking duplicates should the stream freeze at some point.
+    if raw_image == last_raw_image:
+        continue
+    last_raw_image = raw_image
+
 #    print_time("reading image")
 #    print(raw_image is None)
-    image = np.fromstring(raw_image, dtype='uint8').reshape((720,1280,3))
-#    print_time("showing image")
-    cv2.imshow("Streetcam", image)
+
 #    print_time("")
     #sckit for img processing. s3 fs to plug it into cv2 for img writing.
     #Srcript Credit Pascal Schambach - Helped rewrite this
 
+    # Capture images every 10 seconds
     current_time = time()
     if current_time - last_time >= 10:
+        image = np.fromstring(raw_image, dtype='uint8').reshape((720,1280,3))
+        #    print_time("showing image")
+        cv2.imshow("Streetcam", image)
+        last_time = current_time
         st = datetime \
             .fromtimestamp(current_time) \
             .strftime('_%Y%m%d_%H%M%S')
         new_filename = 'capture' + st + '.jpg' # jpg smaller than >png (transparent)
         print("writing file ", counter, ": ", new_filename)
-        # ---
+
         # print_time("write to path")
         image_path = filepath.format(new_filename)
         cv2.imwrite(image_path, image) # write to a filepath, by timestamp
         # files = glob.glob("cam_data/*.jpg")
         # new_files = set(files) - files_wr
-        # -------- sorting paths in the txt file using the union
+        # sorting paths in the txt file using the union
         # print_time("Soting images")
         with open('cam_images.txt', 'a+') as f:
             # for item in sorted(new_files):
             f.write("%s\n" % image_path)
-        last_time = current_time
+
         counter += 1
 
         # files_wr = files_wr.union(new_files)
 
-    # What is happening here :( I get these glitched frames, must resolve
-    # Use wait key 0 or ? This bit is a little confusing.
-    if cv2.waitKey(int(1000/24)) == 27:  # ESC
+    #
+    # Use ESC to kill windhow.
+    if cv2.waitKey(int(1000/24)) == 27:
         break
 
 
