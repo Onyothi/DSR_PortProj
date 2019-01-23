@@ -24,12 +24,12 @@ import darknet
 
 # Detection Function
 def detect(net, meta, imagepath):
-    r = darknet.detect(net, meta, imagepath)
+    r = darknet.detect(net, meta, imagepath.encode())
     return r
 
 
 def test_detect_data_structure(net, meta):
-    result = detect(net, meta, b"test_img/test_image1.jpg")
+    result = detect(net, meta, "test_img/test_image1.jpg")
     assert isinstance(result, list)
     assert len(result) != 0
     for entry in result:
