@@ -12,8 +12,13 @@ def draw_boxes(imagepath, detections):
 
 image = draw_boxes('myimage.png', detect('myimage.png'))
 
+This is what the detection function returns:
+(b'cup', 0.9995042681694031,
+(350.91656494140625, 482.6078796386719, 197.35728454589844, 195.4808349609375))
 
-Convert to dictionary, how do the coord work, check openCV, how the function works
+Do the following:
+Convert to dictionary, how does the coord system work -check openCV for how the function works
+
 """
 import darknet
 
@@ -24,12 +29,11 @@ def detect(net, meta, imagepath):
 
 
 def test_detect_data_structure(net, meta):
-    result = detect(net, meta, "test_img/test_image1.jpg")
+    result = detect(net, meta, b"test_img/test_image1.jpg")
     assert isinstance(result, list)
     assert len(result) != 0
     for entry in result:
         print(entry)
-
         assert sorted(entry.keys()) == [
             'object',  # string such as 'umbrella'
             'proba',  # proba between 0 and 1
