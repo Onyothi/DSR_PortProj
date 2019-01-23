@@ -29,8 +29,14 @@ def detect(net, meta, imagepath):
 
 
 def test_detect_data_structure(net, meta):
+    result_list = []
+    result = detect(net, meta, "test_img/capture_20181126_181828.jpg")
+    #return(result_list.append(r))
+    rlist = result_list.append(result)
+    print(rlist)
+
     result = detect(net, meta, "test_img/test_image1.jpg")
-    assert isinstance(result, list)
+    assert isinstance(result, tuple)
     assert len(result) != 0
     for entry in result:
         print(entry)
