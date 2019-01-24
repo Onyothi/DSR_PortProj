@@ -41,18 +41,19 @@ def detect(net, meta, imagepath):
 
 def test_detect_data_structure(net, meta):
     result = detect(net, meta, "test_img/test_image1.jpg")
-    assert isinstance(result, list) # using list & tuple gives me error "no attr keys" How to ref. dictionary? have seached this.
-    assert len(result) != 0
+
     for entry in result:
         print(entry)
+        assert isinstance(result, list) # using list & tuple gives me error "no attr keys" How to ref. dictionary? have seached this.
+        assert len(result) != 0
 
-        assert sorted(entry.keys()) == [ # This is where it does not execute. changes to {} but this does not help either
+        print(sorted(entry.keys()))
+        assert sorted(entry.keys()) == { # This is where it does not execute. changes to {} but this does not help either
             'object',  # string such as 'umbrella'
             'proba',  # proba between 0 and 1
-            'x0', 'y0',  # lower left corner
-            'x1', 'y1'  # upper right corner
-            ]
-        print(entry)
+            'x0', 'x1',  # lower left corner
+            'y0', 'y1'}  # upper right corner
+            }
         assert isinstance(entry[0], str)
         assert isinstance(entry[1], float)
         assert isinstance(entry[2][0], int)
