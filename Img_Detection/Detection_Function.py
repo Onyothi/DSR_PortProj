@@ -24,8 +24,8 @@ import darknet
 
 # Detection Function
 def detect(net, meta, imagepath):
+    r_dict_list = []
     r = darknet.detect(net, meta, imagepath.encode())
-    return r
     for obj in r:
         if isinstance(obj,list):
             if len(obj) == 3:
@@ -36,7 +36,8 @@ def detect(net, meta, imagepath):
                 r_dict["y0"] = obj[2][1]
                 r_dict["x1"] = obj[2][2]
                 r_dict["y1"] = obj[2][3]
-        return r_dict
+        return r_dict_list.append(r_dict)
+    return r
 
 def test_detect_data_structure(net, meta):
     result = detect(net, meta, "test_img/test_image1.jpg")
