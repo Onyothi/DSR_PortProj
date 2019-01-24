@@ -27,26 +27,25 @@ def detect(net, meta, imagepath):
     r_dict_list = []
     r = darknet.detect(net, meta, imagepath.encode())
     for obj in r:
-        if isinstance(obj,list):
-            if len(obj) == 3:
-                r_dict = {}
-                r_dict["object"] = obj[0]
-                r_dict["proba"] = obj[1]
-                r_dict["x0"] = obj[2][0]
-                r_dict["y0"] = obj[2][1]
-                r_dict["x1"] = obj[2][2]
-                r_dict["y1"] = obj[2][3]
-        return r_dict_list.append(r_dict)
+        r_dict = {} # tried to initialise it outside for loop but gave me an error too. 
+        r_dict["object"] = obj[0]
+        r_dict["proba"] = obj[1]
+        r_dict["x0"] = obj[2][0]
+        r_dict["y0"] = obj[2][1]
+        r_dict["x1"] = obj[2][2]
+        r_dict["y1"] = obj[2][3]
+
+        r_dict_list.append(r_dict)
     return r
 
 def test_detect_data_structure(net, meta):
     result = detect(net, meta, "test_img/test_image1.jpg")
-    assert isinstance(result, tuple)
+    assert isinstance(result, list) # using list & tuple gives me error "no attr keys" How to ref. dictionary? have seached this.
     assert len(result) != 0
     for entry in result:
         print(entry)
 
-        assert sorted(entry.keys()) == [
+        assert sorted(entry.keys()) == [ # This is where it does not execute. changes to {} but this does not help either
             'object',  # string such as 'umbrella'
             'proba',  # proba between 0 and 1
             'x0', 'y0',  # lower left corner
