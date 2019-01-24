@@ -26,20 +26,25 @@ import darknet
 def detect(net, meta, imagepath):
     r = darknet.detect(net, meta, imagepath.encode())
     return r
-
+    for obj in r:
+        if isinstance(obj,list):
+            if len(obj) == 3:
+                r_dict = {}
+                r_dict["object"] = obj[0]
+                r_dict["proba"] = obj[1]
+                r_dict["x0"] = obj[2][0]
+                r_dict["y0"] = obj[2][1]
+                r_dict["x1"] = obj[2][2]
+                r_dict["y1"] = obj[2][3]
+        return r_dict
 
 def test_detect_data_structure(net, meta):
-    result_list = []
-    result = detect(net, meta, "test_img/capture_20181126_181828.jpg")
-    #return(result_list.append(r))
-    rlist = result_list.append(result)
-    print(rlist)
-
     result = detect(net, meta, "test_img/test_image1.jpg")
     assert isinstance(result, tuple)
     assert len(result) != 0
     for entry in result:
         print(entry)
+        
         assert sorted(entry.keys()) == [
             'object',  # string such as 'umbrella'
             'proba',  # proba between 0 and 1
