@@ -27,7 +27,7 @@ def detect(net, meta, imagepath):
     r_dict_list = []
     r = darknet.detect(net, meta, imagepath.encode())
     for obj in r:
-        r_dict = {} # tried to initialise it outside for loop but gave me an error too. 
+        r_dict = {} # tried to initialise it outside for loop but gave me an error too.
         r_dict["object"] = obj[0]
         r_dict["proba"] = obj[1]
         r_dict["x0"] = obj[2][0]
@@ -36,7 +36,8 @@ def detect(net, meta, imagepath):
         r_dict["y1"] = obj[2][3]
 
         r_dict_list.append(r_dict)
-    return r
+    return r_dict_list
+    #return r
 
 def test_detect_data_structure(net, meta):
     result = detect(net, meta, "test_img/test_image1.jpg")
@@ -51,12 +52,13 @@ def test_detect_data_structure(net, meta):
             'x0', 'y0',  # lower left corner
             'x1', 'y1'  # upper right corner
             ]
+        print(entry)
         assert isinstance(entry[0], str)
         assert isinstance(entry[1], float)
         assert isinstance(entry[2][0], int)
-        assert isinstance(entry[2][1], int)
-        assert isinstance(entry[2][2], int)
-        assert isinstance(entry[2][3], int)
+        assert isinstance(entry[3][1], int)
+        assert isinstance(entry[4][2], float)
+        assert isinstance(entry[5][3], float)
         return entry
 
 
