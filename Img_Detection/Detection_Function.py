@@ -53,10 +53,10 @@ def test_detect_data_structure(net, meta):
         assert isinstance(entry['object'], str)
         assert isinstance(entry['proba'], int)
         assert isinstance(entry['x0'], float)
-        assert isinstance(entry[3], int)
-        assert isinstance(entry[4], int)
-        assert isinstance(entry[5], int)
-        return entry
+        assert isinstance(entry['x1'], int)
+        assert isinstance(entry['y0'], int)
+        assert isinstance(entry['y1'], int)
+        #return entry
 
 
 def main():
