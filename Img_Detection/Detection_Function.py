@@ -49,14 +49,16 @@ def test_detect_data_structure(net, meta):
             'x0', 'x1',  # lower left corner
             'y0', 'y1'  # upper right corner
             ]
+        for key, value in entry.items():
+            print(key, type(value))
 
-        assert isinstance(entry['object'], str)
-        assert isinstance(entry['proba'], int)
+        assert isinstance(entry['object'].decode('utf-8'), str)
+        assert isinstance(entry['proba'], float)
         assert isinstance(entry['x0'], float)
-        assert isinstance(entry['x1'], int)
-        assert isinstance(entry['y0'], int)
-        assert isinstance(entry['y1'], int)
-        #return entry
+        assert isinstance(entry['x1'], float)
+        assert isinstance(entry['y0'], float)
+        assert isinstance(entry['y1'], float)
+        return entry
 
 
 def main():
