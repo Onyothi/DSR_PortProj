@@ -47,7 +47,7 @@ def test_detect_data_structure(net, meta):
             'object',  # string such as 'umbrella'
             'proba',  # proba between 0 and 1
             ('x0', 'x1'),  # lower left corner
-            print(sorted(entry.keys()))
+            print(sorted(entry.keys())),
             ('y0', 'y1')}  # upper right corner
 
         # print(entry.keys())
