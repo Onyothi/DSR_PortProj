@@ -43,12 +43,12 @@ def test_detect_data_structure(net, meta):
         assert len(result) != 0
         # result_dict = {}
         print(sorted(entry.keys()))
-        assert sorted(entry.keys()) == {
+        assert sorted(entry.keys()) == (
             'object',  # string such as 'umbrella'
             'proba',  # proba between 0 and 1
             ('x0', 'x1'),  # lower left corner
             print(sorted(entry.keys())),
-            ('y0', 'y1')}  # upper right corner
+            ('y0', 'y1'))  # upper right corner
 
         # print(entry.keys())
         assert isinstance(entry[0], str)
